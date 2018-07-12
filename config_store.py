@@ -1,0 +1,2 @@
+dbconn = None
+db = None
