@@ -1,0 +1,57 @@
+QWidget:window {
+	background-color: #FFFFFF;
+}
+
+* {
+  color: #212121;
+}
+
+
+QPushButton {
+  font-weight: bold;
+	background-color: #FFFFFF;
+  color: #2196F3;
+  border-style: solid;
+  padding-left: .5em;
+  padding-right: .5em;
+  padding-top: .25em;
+  padding-bottom: .25em;
+}
+
+QPushButton:pressed {
+  background-color: #F5F5F5;
+}
+
+QLineEdit {
+  color: #616161;
+  border-style: solid;
+  border-bottom-color: #2196F3;
+  border-bottom-width: .1em 
+}
+
+QLineEdit:focus { 
+  border-style: solid;
+  border-bottom-color: #FFC107;
+  border-bottom-width: .1em 
+}
+
+QRadioButtion {
+  color: #42A5F5;
+}
+
+QSlider::groove:horizontal {
+    border-style: solid;
+    border-radius: .1m;
+    height: .25em; /* the groove expands to the size of the slider by default. by giving it a height, it has a fixed size */
+    background-color: #BBDEFB;
+    margin: 2px 0;
+}
+
+QSlider::handle:horizontal {
+    background-color: #2196F3;
+    border: 1px solid #5c5c5c;
+    width: .75em;
+    margin: -.25em 0; /* handle is placed by default on the contents rect of the groove. Expand outside the groove */
+    border-radius: .3em;
+    border-width: 0px   
+}

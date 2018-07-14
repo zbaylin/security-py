@@ -5,7 +5,7 @@ import csv
 
 
 def initDB():
-  config.dbconn = sqlite3.connect("db/data.db")
+  config.dbconn = sqlite3.connect(config.dir_path + "/db/data.db", check_same_thread=False)
   config.db = config.dbconn.cursor()
   scanFails()
 
