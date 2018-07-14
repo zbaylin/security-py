@@ -101,7 +101,11 @@
         </widget>
        </item>
        <item>
-        <widget class="QListWidget" name="filingsList"/>
+        <widget class="QListWidget" name="filingsList">
+         <property name="selectionMode">
+          <enum>QAbstractItemView::ExtendedSelection</enum>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>

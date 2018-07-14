@@ -4,6 +4,7 @@ QWidget:window {
 
 * {
   color: #212121;
+  font-family: "Libre Franklin";
 }
 
 

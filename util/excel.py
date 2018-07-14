@@ -1,6 +1,15 @@
-def importDataToExcel(data, workbook):
-  wbRange = workbook.app.selection
+def importDataToExcel(filing, xlRange):
+  print(filing)
   arr = [
+    [
+      filing.date,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None
+    ],
     [
       "Issuer Name",
       "Class Title",
@@ -12,7 +21,7 @@ def importDataToExcel(data, workbook):
     ]
   ]
 
-  for datum in data:
+  for datum in filing.data:
     arr.append(
       [
         datum.issuerName,
@@ -24,4 +33,4 @@ def importDataToExcel(data, workbook):
         datum.investmentType
       ]
     )
-  wbRange.value = arr
+  xlRange.value = arr

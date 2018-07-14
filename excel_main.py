@@ -46,11 +46,19 @@ class SearchWidget(QtWidgets.QWidget, Ui_searchWidget):
         self.getFilingsThread.start()
       
       def filingsResultPage():
-        filingListItem = self.filingsList.currentItem()
-        filing = filingListItem.data(QtCore.Qt.UserRole)
-        self.getFilingDataThread = threads.GetFilingDataThread(self, filing)
-        self.getFilingDataThread.networkState.connect(self.getFilingDataHandler)
-        self.getFilingDataThread.start()
+        filingListItems = self.filingsList.selectedItems()
+        print(filingListItems)
+        for i, filingListItem in enumerate(filingListItems):
+          filing = filingListItem.data(QtCore.Qt.UserRole)
+          self.getFilingDataThread = threads.GetFilingDataThread(
+            self,
+            filing,
+            i
+          )
+          self.getFilingDataThread.networkState.connect(
+            self.getFilingDataHandler
+          )
+          self.getFilingDataThread.start()
 
       exec(currentWidget.objectName() + "()")
     else:
@@ -95,7 +103,8 @@ class SearchWidget(QtWidgets.QWidget, Ui_searchWidget):
     
     def done():
       self.companySearchResultsLabel.setText("Filings downloaded successfully!")
-      for filing in self.getFilingsThread.result:
+      for filing in self.getFilingsThread.result.filings:
+        print(filing)
         item = QtWidgets.QListWidgetItem(self.filingsList)
         item.setData(QtCore.Qt.UserRole, filing)
         item.setText(
@@ -120,16 +129,19 @@ class SearchWidget(QtWidgets.QWidget, Ui_searchWidget):
       self.filingsResultsLabel.setText("Downloading data...")
     
     def done():
+      row = wb.app.selection.row
+      column = wb.app.selection.column + (e["thread"].index * 7)
+      xlRange = xw.sheets.active.range(row, column)
       excel.importDataToExcel(
-        self.getFilingDataThread.result,
-        wb
+        e["thread"].result,
+        xlRange
       )
       self.filingsResultsLabel.setText("Done importing!")
     
     def error():
       print(self.getFilingDataThread.result)
     
-    exec(e + "()")
+    exec(e["state"] + "()")
 
 
 if __name__ == "__main__":
@@ -142,14 +154,18 @@ if __name__ == "__main__":
   db.initDB()
 
   wb = xw.Book(args.workbook)
-  print(wb.app.selection)
 
-  app = QtWidgets.QApplication(sys.argv)
+  app = QtWidgets.QApplication.instance()
+  if app is None:
+    app = QtWidgets.QApplication(sys.argv)
+  
   mainWindow = MainWindow()
   with open(config.dir_path + "/style/material-blue.qss", "r") as stylesheet:
     mainWindow.setStyleSheet(stylesheet.read())
 
   searchWidget = SearchWidget()
   mainWindow.setCentralWidget(searchWidget)
+  ret = app.exec_()
   app.quit()
-  sys.exit(app.exec_())
+  wb.close()
+  sys.exit(ret)

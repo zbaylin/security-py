@@ -21,7 +21,8 @@ def elemToDict(parent):
 
 
 def cusipToTicker(cusip):
-  result = config.db.execute(
+  tempCursor = config.dbconn.cursor()
+  result = tempCursor.execute(
     "SELECT ticker FROM fails_to_deliver WHERE cusip = ?",
     (cusip, )
   )

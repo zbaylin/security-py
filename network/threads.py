@@ -10,7 +10,7 @@ class ThreadState:
 
 class NetworkState(ThreadState):
   active = "active"
-  
+
 
 class CompanySearchThread(QtCore.QThread):
   networkState = QtCore.Signal(str)
@@ -28,7 +28,6 @@ class CompanySearchThread(QtCore.QThread):
       self.networkState.emit(NetworkState.done)
       pass
     except Exception as e:
-      print(456)
       self.result = e
       self.networkState.emit(NetworkState.error)
       pass
@@ -38,16 +37,17 @@ class GetFilingsThread(QtCore.QThread):
   networkState = QtCore.Signal(str)
   result = ""
 
-  def __init__(self, parent, companyItem):
+  def __init__(self, parent, companyItem, index=0):
     super(GetFilingsThread, self).__init__(parent)
     self.company = companyItem
+    self.index = index
     self.networkState.emit(NetworkState.idle)
 
   def run(self):
     self.networkState.emit(NetworkState.active)
     try:
       self.company.getFilings()
-      self.result = self.company.filings
+      self.result = self.company
       self.networkState.emit(NetworkState.done)
       pass
     except Exception as e:
@@ -57,23 +57,44 @@ class GetFilingsThread(QtCore.QThread):
 
 
 class GetFilingDataThread(QtCore.QThread):
-  networkState = QtCore.Signal(str)
+  networkState = QtCore.Signal(dict)
   result = ""
 
-  def __init__(self, parent, filing):
+  def __init__(self, parent, filing, index=0):
     super(GetFilingDataThread, self).__init__(parent)
     self.filing = filing
-    self.networkState.emit(NetworkState.idle)
+    self.index = index
+    self.networkState.emit(
+      {
+        "state": NetworkState,
+        "thread": self
+      }
+    )
   
   def run(self):
-    self.networkState.emit(NetworkState.active)
+    self.networkState.emit(
+      {
+        "state": NetworkState.active,
+        "thread": self
+      }
+    )
     try:
       self.filing.getData()
-      self.result = self.filing.data
-      self.networkState.emit(NetworkState.done)
+      self.result = self.filing
+      self.networkState.emit(
+        {
+          "state": NetworkState.done,
+          "thread": self
+        }
+      )
       pass
     except Exception as e:
       print(e)
       self.result = e
-      self.networkState.emit(NetworkState.error)
+      self.networkState.emit(
+        {
+          "state": NetworkState.error,
+          "thread": self
+        }
+      )
     
